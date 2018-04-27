@@ -1,6 +1,8 @@
-# repair
+# 飞扬俱乐部微信报修小程序
 
-> A Mpvue project
+[![Build Status](https://travis-ci.org/xiaopc/fyRepair-xcx.svg?branch=master)](https://travis-ci.org/xiaopc/fyRepair-xcx)
+
+Built by [mpvue](https://github.com/Meituan-Dianping/mpvue) 
 
 ## Build Setup
 
