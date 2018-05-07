@@ -43,20 +43,24 @@
           </view>
       </view>
     </view>
+    <singlebtn text="确认接单" @submit="handleAccept" v-if="ticketData.status==1"/>
 
   </div>
 </template>
 
 <script>
 import repairApi from '@/controller/repairapi'
+import singlebtn from '@/components/singlebtn'
 
 export default {
   components: {
+      singlebtn
   },
 
   data () {
     return {
       repairData: repairApi.data,
+      ticketId: null,
       ticketData: null
     }
   },
@@ -79,6 +83,36 @@ export default {
               }
           }
       })
+    },
+    handleAccept () {
+        var vm = this
+        repairApi.acceptTicket(vm.ticketId).then(v => {
+            console.log(v)
+            if (v.code == 200){
+                vm.refresh()
+            } else {
+                wx.showToast({
+                    title: '操作失败('+v.code+')',
+                    icon: 'none',
+                    duration: 2000
+                })
+            }
+        })
+    },
+    refresh () {
+        var vm = this
+        repairApi.getTicketDetail(vm.ticketId).then(v => {
+            if (v.code == 200){
+                vm.$data.ticketData = v.data
+                console.log(v)
+            } else {
+                wx.showToast({
+                    title: '获取详情失败',
+                    icon: 'none',
+                    duration: 2000
+                })
+            }
+        })
     }
   },
 
@@ -87,23 +121,12 @@ export default {
   },
 
   onLoad (options) {
-    var vm = this
-    repairApi.getTicketDetail(options["number"]).then(v => {
-      if (v.code == 200){
-        vm.$data.ticketData = v.data
-        console.log(v)
-      } else {
-          wx.showToast({
-            title: '获取详情失败',
-            icon: 'none',
-            duration: 2000
-          })
-      }
-    })
+    this.ticketId = options["number"]
+    this.refresh()
   },
 
   onHide () {
-      this.ticketData = null
+    this.ticketData = null
   }
 }
 </script>

@@ -27,7 +27,7 @@ export default {
 
   methods: {
     formSubmit: function(e){
-      this.$emit('submit', e.mp.detail.value)
+      this.$emit('submit')
     }
   }
 }

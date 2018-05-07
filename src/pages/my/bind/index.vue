@@ -48,6 +48,10 @@ export default {
   },
 
   created () {
+  },
+
+  onLoad () {
+    wxAccount.login()
   }
 
 }

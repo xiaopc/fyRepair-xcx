@@ -79,6 +79,14 @@ export default{
                 resolve(r)
             })
         })
+    },
+    acceptTicket (id) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("order/id/"+id+"/accept", "POST").then(r => {
+                resolve(r)
+            })
+        })
     }
     
 }
