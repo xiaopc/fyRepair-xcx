@@ -9,6 +9,9 @@ var repairData = {
         bindWx: false,
         useEmailNoty: false,
         useWxNoty: false
+    },
+    ticket: {
+        text: null
     }
 }
 
@@ -54,6 +57,32 @@ export default{
             })
         })
     },
+    getotp (e) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("getotp", "POST", e).then(r => {
+                if (r.code == 200){
+                    resolve(r.code)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
+    },
+    checkWxCode (e) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("wechat/code", "POST", e).then(r => {
+                if (r.code == 200){
+                    vm.data.info.type = r.basic.type
+                    wx.setStorageSync("repairData", vm.data)
+                    resolve(r.profile)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
+    },
     logout () {
         var vm = this
         vm.data.apiCookies = null
@@ -63,6 +92,18 @@ export default{
         //        resolve(r)
         //    })
         //})    
+    },
+    getDevices (){
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("my/device", "GET").then(r => {
+                if (r.code == 200){
+                    resolve(r.data)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
     },
     getTickets () {
         var vm = this

@@ -3,8 +3,7 @@ export default {
         return new Promise(function (resolve, reject){
             wx.login({
                 success: (res) => {
-                    console.log(res.code)
-                    resolve(true)
+                    resolve(res)
                 }
             })
         })

@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  props: ['data', 'text', 'loading', 'disabled'],
+  props: ['data', 'text', 'loading', 'disabled', 'size', 'type'],
 
   data() {
     return {

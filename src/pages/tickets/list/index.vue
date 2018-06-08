@@ -1,22 +1,6 @@
 <template>
   <div>
-    <view class="page" v-if="fyData.login==false">
-        <view class="weui-msg">
-            <view class="weui-msg__icon-area">
-                <icon type="info" size="93"></icon>
-            </view>
-            <view class="weui-msg__text-area">
-                <view class="weui-msg__title">请登录</view>
-                <view class="weui-msg__desc">登录后即可查看、管理维修单</view>
-            </view>
-            <view class="weui-msg__opr-area">
-                <view class="weui-btn-area">
-                    <button @click="login" class="weui-btn" type="default">登录</button>
-                </view>
-            </view>
-        </view>
-    </view>
-    <view class="page" v-else>
+    <view class="page" v-if="fyData.login">
       <view class="weui-form-preview ticket" v-for="(ticket, index) in tickets" @click="jumpToDetail(index)">
           <view class="weui-form-preview__hd">
               <view class="weui-form-preview__item">
@@ -66,7 +50,7 @@ export default {
       wx.navigateTo({url: "/pages/my/login/main"})
     },
     jumpToDetail (index) {
-      wx.navigateTo({url: "detail/main?number=" + this.tickets[index].number})
+      wx.navigateTo({url: "../detail/main?number=" + this.tickets[index].number})
     }
   },
 

@@ -26,11 +26,11 @@ export default{
                 'content-type': 'application/x-www-form-urlencoded', 
                 'cookie': vm.data.ssoCookies
             }
-            var url = config.sso.apiBase+"login"
+            var url = config.sso.apiBase+"fastlogin"
             var datas = {
                 appid: config.sso.appId,
                 username: e.username,
-                password: e.password
+                otpcode: e.otpcode
             }
             wx.request({
                 url: url,
@@ -61,6 +61,8 @@ export default{
         //wx.removeStorage({key: "fyAccount", success: function (res) {} })
     },
     updateInfo (e) {
+        accountData.login = true
+        accountData.username = e.cell
         accountData.info = Object.assign(accountData.info, e)
         wx.setStorageSync("fyAccount", accountData)
     }
