@@ -1,135 +1,170 @@
 <template>
   <div>
-    <view class="weui-cells__title"> </view>
-    <view class="weui-cells weui-cells_after-title" v-if="ticketData!=null">
-        <view class="weui-cell weui-cell_access">
-            <view class="weui-cell__bd">机主</view>
-            <view class="weui-cell__ft">{{ticketData.name}} {{(ticketData.vip==1)?"(会员)":""}}</view>
+    <view class="weui-cells weui-panel" v-if="ticketData!=null">
+      <view class="weui-btn-area">
+        <view class="cell-text" style="line-height:1;min-height:25px;height:25px;" :class="statusColor[ticketData.status]">{{status[ticketData.status]}}</view>
+        <view class="weui-label">{{ticketData.time}}</view>
+      </view>
+      <view class="weui-btn-area" v-if="!!ticketData.name">
+        <view class="weui-label">{{ (repairData.info.type==2) ? "机主" : "技术员"}}</view>
+        <view class="cell-text">{{ticketData.name}} {{(ticketData.vip==1)?"(会员)":""}}</view>
+      </view>
+      <view class="weui-btn-area inline" v-if="!!ticketData.name">
+        <view style="width:100%">
+          <view class="weui-label">联系方式</view>
+          <view class="cell-text">{{ticketData.phone}}</view>
         </view>
-        <view class="weui-cell weui-cell_access" @click="handlePhoneClick">
-            <view class="weui-cell__bd">联系方式</view>
-            <view class="weui-cell__ft weui-cell__ft_in-access">{{ticketData.phone}}</view>
+        <view class="weui-btn-area inline-btn" style="height:23px;margin-top:3px;">
+          <button @click="handlePhoneClick" class="weui-btn inline">复制</button>
         </view>
-        <view class="weui-cell weui-cell_access">
-            <view class="weui-cell__bd">设备型号</view>
-            <view class="weui-cell__ft">{{ticketData.computer.brand}} {{ticketData.computer.model}}</view>
-        </view>
-        <view class="weui-cell weui-cell_access">
-            <view class="weui-cell__bd">购买日期</view>
-            <view class="weui-cell__ft">{{ticketData.computer.buy_time}}</view>
-        </view>
-        <view class="weui-cell weui-cell_access">
-            <view class="weui-cell__bd">报修时间</view>
-            <view class="weui-cell__ft">{{ticketData.time}}</view>
-        </view>
-        <view class="weui-cell weui-cell_access" v-if="ticketData.distribute_time!=0">
-            <view class="weui-cell__bd">分单时间</view>
-            <view class="weui-cell__ft">{{ticketData.distribute_time}}</view>
-        </view>
-        <view class="weui-cell weui-cell_access" v-if="ticketData.staff_confirm_time!=0">
-            <view class="weui-cell__bd">确认时间</view>
-            <view class="weui-cell__ft">{{ticketData.staff_confirm_time}}</view>
-        </view>
-        <view class="weui-cell weui-cell_access" v-if="ticketData.user_confirm_time!=0">
-            <view class="weui-cell__bd">完成时间</view>
-            <view class="weui-cell__ft">{{ticketData.user_confirm_time}}</view>
-        </view>
-    </view>
-    <view class="weui-panel" v-if="ticketData!=null">
-      <view class="weui-panel__bd">
-          <view class="weui-media-box weui-media-box_text">
-              <view class="weui-media-box__title weui-media-box__title_in-text">问题详情</view>
-              <view class="weui-media-box__desc">{{ticketData.description}}</view>
-          </view>
+      </view>
+      <view class="weui-btn-area">
+        <view class="weui-label">设备</view>
+        <view class="cell-text">{{ticketData.computer.brand}} {{ticketData.computer.model}}</view>
+      </view>
+      <view class="weui-btn-area">
+        <view class="weui-label">购买日期</view>
+        <view class="cell-text">{{ticketData.computer.buy_time}}</view>
+      </view>
+      <view class="weui-btn-area">
+        <view class="weui-label">问题详情</view>
+        <view class="cell-text" style="line-height:1.5;padding-top:22rpx;">{{ticketData.description}}</view>
       </view>
     </view>
-    <singlebtn text="确认接单" @submit="handleAccept" v-if="ticketData.status==1"/>
-
+    <view v-if="ticketData!=null">
+      <singlebtn text="确认接单" type="primary" v-if="repairData.info.type==2 && ticketData.status==1" @submit="handleAccept" />
+      <singlebtn text="取消报修" type="warn" v-if="repairData.info.type!=2 && ticketData.status<3" @submit="handleCancel" :disabled="ticketData.status==2" />
+      <singlebtn text="确认完成" type="primary" v-if="repairData.info.type!=2 && ticketData.status>=3" @submit="handleFinish" :disabled="ticketData.status==4" />
+    </view>
+    <view style="height:30px"></view>
   </div>
 </template>
 
 <script>
-import repairApi from '@/controller/repairapi'
-import singlebtn from '@/components/singlebtn'
-
-export default {
-  components: {
+  import repairApi from '@/controller/repairapi'
+  import singlebtn from '@/components/singlebtn'
+  export default {
+    components: {
       singlebtn
-  },
-
-  data () {
-    return {
-      repairData: repairApi.data,
-      ticketId: null,
-      ticketData: null
-    }
-  },
-
-  methods: {
-    handlePhoneClick () {
-      var vm = this
-      wx.showActionSheet({
+    },
+    data() {
+      return {
+        repairData: repairApi.data,
+        ticketId: null,
+        ticketData: null,
+        status: ['待分配', '待确认', '已取消', '维修中', '已完成', '重新分配'],
+        statusColor: ['blue', 'blue', 'gray', 'blue', 'black', 'blue'],
+      }
+    },
+    methods: {
+      handlePhoneClick() {
+        var vm = this
+        wx.showActionSheet({
           itemList: ['复制号码', '呼叫'],
           success: function(res) {
-              if (!res.cancel) {
-                  switch (res.tapIndex){
-                    case 0:
-                      wx.setClipboardData({data:vm.ticketData.phone})
-                      break;
-                    case 1:
-                      wx.makePhoneCall({phoneNumber:vm.ticketData.phone})
-                      break;
-                  }
+            if (!res.cancel) {
+              switch (res.tapIndex) {
+                case 0:
+                  wx.setClipboardData({
+                    data: vm.ticketData.phone
+                  })
+                  break;
+                case 1:
+                  wx.makePhoneCall({
+                    phoneNumber: vm.ticketData.phone
+                  })
+                  break;
               }
+            }
           }
-      })
-    },
-    handleAccept () {
+        })
+      },
+      handleAccept() {
         var vm = this
         repairApi.acceptTicket(vm.ticketId).then(v => {
-            console.log(v)
-            if (v.code == 200){
-                vm.refresh()
-            } else {
-                wx.showToast({
-                    title: '操作失败('+v.code+')',
+          if (v.code == 200) {
+            vm.refresh()
+          } else {
+            wx.showToast({
+              title: '操作失败(' + v.code + ')',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+        })
+      },
+      handleCancel() {
+        var vm = this
+        wx.showModal({
+          title: '取消维修单',
+          content: '此操作不可逆',
+          confirmText: '删除',
+          confirmColor: '#EA3C16',
+          success: function(res) {
+            if (res.confirm) {
+              repairApi.cancelTicket(vm.ticketId).then(v => {
+                if (v.code == 200) {
+                  vm.refresh()
+                } else {
+                  wx.showToast({
+                    title: '操作失败(' + v.code + ')',
                     icon: 'none',
                     duration: 2000
-                })
+                  })
+                }
+              })
             }
+          }
         })
-    },
-    refresh () {
+      },
+      handleFinish() {
+        var vm = this
+        repairApi.finishTicket(vm.ticketId).then(v => {
+          if (v.code == 200) {
+            vm.refresh()
+          } else {
+            wx.showToast({
+              title: '操作失败(' + v.code + ')',
+              icon: 'none',
+              duration: 2000
+            })
+          }
+        })
+      },
+      refresh() {
         var vm = this
         repairApi.getTicketDetail(vm.ticketId).then(v => {
-            if (v.code == 200){
-                vm.$data.ticketData = v.data
-                console.log(v)
-            } else {
-                wx.showToast({
-                    title: '获取详情失败',
-                    icon: 'none',
-                    duration: 2000
-                })
-            }
+          if (v.code == 200) {
+            vm.$data.ticketData = v.data
+            console.log(v)
+          } else {
+            wx.showToast({
+              title: '获取详情失败',
+              icon: 'none',
+              duration: 2000
+            })
+          }
         })
+      }
+    },
+    created() {
+      repairApi.init()
+    },
+    onLoad(options) {
+      this.ticketId = options["number"]
+      this.refresh()
+    },
+    onHide() {
+      this.ticketData = null
     }
-  },
-
-  created () {
-    repairApi.init()
-  },
-
-  onLoad (options) {
-    this.ticketId = options["number"]
-    this.refresh()
-  },
-
-  onHide () {
-    this.ticketData = null
   }
-}
 </script>
 
 <style>
+  .blue {
+    color: #65b2e9;
+  }
+  .gray {
+    color: #b2b2b2;
+  }
 </style>

@@ -9,7 +9,8 @@ var repairData = {
         bindWx: false,
         useEmailNoty: false,
         useWxNoty: false
-    }
+    },
+    new: null
 }
 
 export default{
@@ -54,9 +55,45 @@ export default{
             })
         })
     },
+    newConnect (e) {
+        this.data.new = e
+    },
+    getotp (e) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("getotp", "POST", e).then(r => {
+                if (r.code == 200){
+                    resolve(r.code)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
+    },
+    checkWxCode (e) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("wechat/code", "POST", e).then(r => {
+                if (r.code == 200){
+                    vm.data.info.type = r.basic.type
+                    wx.setStorageSync("repairData", vm.data)
+                    resolve(r.profile)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
+    },
     logout () {
         var vm = this
-        vm.data.apiCookies = null
+        vm.query("wechat/logout", "GET").then(r => {
+            vm.data.apiCookies = null
+            wx.clearStorageSync()
+            wx.reLaunch({
+            url: "/pages/login/main"
+            })
+        })
+
         //wx.removeStorage({key: "repairData", success: function (res) {} })
         //return new Promise(function (resolve, reject){
         //    vm.query("logout", "GET").then(r => {
@@ -64,10 +101,30 @@ export default{
         //    })
         //})    
     },
+    getDevices (){
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("my/device", "GET").then(r => {
+                if (r.code == 200){
+                    resolve(r.data)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
+    },
     getTickets () {
         var vm = this
         return new Promise(function (resolve, reject){
             vm.query("my/order", "GET").then(r => {
+                resolve(r)
+            })
+        })
+    },
+    getActiveTickets () {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("my/order/active", "GET").then(r => {
                 resolve(r)
             })
         })
@@ -87,6 +144,34 @@ export default{
                 resolve(r)
             })
         })
+    },
+    cancelTicket (id) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("order/id/"+id+"/cancel", "POST").then(r => {
+                resolve(r)
+            })
+        })
+    },
+    finishTicket (id) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("order/id/"+id+"/finish", "POST").then(r => {
+                resolve(r)
+            })
+        })
+    },
+    newTicket (e) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("my/order/new", "POST", e).then(r => {
+                console.log(r)
+                if (r.code == 200){
+                    resolve(r.data)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
     }
-    
 }
