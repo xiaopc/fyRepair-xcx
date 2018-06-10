@@ -10,9 +10,7 @@ var repairData = {
         useEmailNoty: false,
         useWxNoty: false
     },
-    ticket: {
-        text: null
-    }
+    new: null
 }
 
 export default{
@@ -57,6 +55,9 @@ export default{
             })
         })
     },
+    newConnect (e) {
+        this.data.new = e
+    },
     getotp (e) {
         var vm = this
         return new Promise(function (resolve, reject){
@@ -85,7 +86,14 @@ export default{
     },
     logout () {
         var vm = this
-        vm.data.apiCookies = null
+        vm.query("wechat/logout", "GET").then(r => {
+            vm.data.apiCookies = null
+            wx.clearStorageSync()
+            wx.reLaunch({
+            url: "/pages/login/main"
+            })
+        })
+
         //wx.removeStorage({key: "repairData", success: function (res) {} })
         //return new Promise(function (resolve, reject){
         //    vm.query("logout", "GET").then(r => {
@@ -113,6 +121,14 @@ export default{
             })
         })
     },
+    getActiveTickets () {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("my/order/active", "GET").then(r => {
+                resolve(r)
+            })
+        })
+    },
     getTicketDetail (id) {
         var vm = this
         return new Promise(function (resolve, reject){
@@ -128,6 +144,34 @@ export default{
                 resolve(r)
             })
         })
+    },
+    cancelTicket (id) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("order/id/"+id+"/cancel", "POST").then(r => {
+                resolve(r)
+            })
+        })
+    },
+    finishTicket (id) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("order/id/"+id+"/finish", "POST").then(r => {
+                resolve(r)
+            })
+        })
+    },
+    newTicket (e) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("my/order/new", "POST", e).then(r => {
+                console.log(r)
+                if (r.code == 200){
+                    resolve(r.data)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
     }
-    
 }

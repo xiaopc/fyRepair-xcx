@@ -1,7 +1,10 @@
 <template>
   <div>
-    <image class="banner" src="/static/images/index_banner.png" mode="aspectFit" />
-    <loginform ref="form" @submit="loginFormSubmit" @getotp="otpSubmit" 
+    <view :class="{hide: editing}">
+      <view class="weui-cells weui-panel" style="height:200px;"></view>
+      <image class="banner" src="/static/images/index_banner.png" mode="aspectFit" />
+    </view>
+    <loginform ref="form" @submit="loginFormSubmit" @getotp="otpSubmit" @focus="oFocus" @blur="oBlur"
                :submitLoading="isSubmitLoading" :otpCountdown="otpCountdown" :otpLoading="otpLoading"/>
   </div>
 </template>
@@ -14,6 +17,7 @@ import repairApi from '@/controller/repairapi'
 export default {
   data () {
     return {
+      editing: false,
       isSubmitLoading: false,
       otpCountdown: 0,
       otpLoading: false,
@@ -26,18 +30,37 @@ export default {
   },
 
   methods: {
+    jumpTo: function(e){
+      wx.reLaunch({
+        url: e
+      })
+    },
+    oFocus: function(e){
+      this.editing = true
+    },
+    oBlur: function(e){
+      this.editing = false
+    },
     loginFormSubmit (e) {
       var vm = this
       vm.$data.isSubmitLoading=true
       fyAccount.login(e).then(v => {
         vm.$data.isSubmitLoading=false
         if (v.code == 200){
-          repairApi.connect(v.info).then(r => {
-            fyAccount.updateInfo(r)
-            wx.reLaunch({
-              url: "../tickets/new/main"
-            })
-          })
+          if (v.new){
+            repairApi.newConnect(v.info)
+            vm.jumpTo("../tickets/new/main")
+          } else {
+            repairApi.connect(v.info).then(r => {
+              fyAccount.updateInfo(r)
+              if (repairApi.data.info.type == 2){
+                vm.jumpTo("../tickets/list/main")
+              } else {
+                vm.jumpTo("../tickets/new/main")
+              }
+            })            
+          }
+
         } else {
             wx.showToast({
               title: '登录失败:'+v.info,
@@ -87,6 +110,7 @@ export default {
 <style>
 .banner{
   width:100%;
-  height:150px;
+  position:absolute;
+  top:25px;
 }
 </style>
