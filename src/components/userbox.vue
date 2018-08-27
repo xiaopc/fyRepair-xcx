@@ -12,9 +12,9 @@
               <button :class="{red: btnStyle}" @click="btnClick" class="weui-btn inline">{{ (functype==0)?"更多":"退出" }}</button>
             </view>
           </view>
-          <view class="weui-btn-area" v-if="disabled || usertype == 1">
-            <view class="weui-label">{{ (usertype==2)?"统计" : "姓名" }}</view>
-            <view class="cell-text" style="word-spacing:10rpx;">{{ (usertype==2)?text : indata.name }}</view>
+          <view class="weui-btn-area" v-if="disabled || usertype > 1">
+            <view class="weui-label">{{ (usertype>1)?"统计" : "姓名" }}</view>
+            <view class="cell-text" style="word-spacing:10rpx;">{{ (usertype>1)?text : indata.name }}</view>
           </view>
           <inputbox v-else @focus="oFocus" @blur="oBlur" @input="cellInput" label="姓名" name="name" maxlength="8" />
         </view>
@@ -34,8 +34,8 @@
     data() {
       return {
         disabled: true,
-        usertype: 0, // 0 for user, 1 for staff
-        functype: 0, // 0 for more, 1 for logout
+        usertype: 0, // 0 for user, 2 for staff
+        functype: 0, // 0 for more, 2 for logout
         indata: null,
         text: "",
         isPanelFocus: false,

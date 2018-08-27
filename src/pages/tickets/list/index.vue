@@ -20,6 +20,7 @@
       </view>
     </view>
     <view style="height:30px"></view>
+    <appfooter />
   </div>
 </template>
 
@@ -27,6 +28,7 @@
   import fyAccount from '@/controller/fyaccount'
   import repairApi from '@/controller/repairapi'
   import userbox from '@/components/userbox'
+  import appfooter from '@/components/appfooter'
   export default {
     data() {
       return {
@@ -39,7 +41,7 @@
       }
     },
     components: {
-      userbox
+      userbox, appfooter
     },
     methods: {
       login() {

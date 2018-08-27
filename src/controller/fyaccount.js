@@ -43,7 +43,7 @@ export default{
                         vm.data.ssoCookies = res.header["Set-Cookie"]
                         vm.data.username = e.username
                         wx.setStorageSync("fyAccount", vm.data)
-                        resolve({code: 200, info: {uid: res.data.uid, token: res.data.token, new: res.data.newuser}})
+                        resolve({code: 200, info: {uid: res.data.uid, token: res.data.token, new: (res.data.profile == 100)}})
                     } else {
                         resolve({code: 400, info: config.sso.errorCode[res.data.code]})
                     }
