@@ -1,6 +1,7 @@
 <template>
   <div style="overflow:hidden">
     <userbox :disabled="apiData.info.type>=0" :usertype="apiData.info.type" functype="0" :indata="fyData.info" @input="nameInput" />
+    <announcebox />
     <div v-if="isAvailable">
       <view class="weui-cells weui-panel">
         <view class="weui-btn-area">
@@ -44,6 +45,7 @@
   import inputbox from '@/components/form/inputbox'
   import textareabox from '@/components/form/textareabox'
   import userbox from '@/components/userbox'
+  import announcebox from '@/components/announcebox'
   import appfooter from '@/components/appfooter'
   import wxAccount from '@/controller/wxaccount'
   import fyAccount from '@/controller/fyaccount'
@@ -73,6 +75,7 @@
       inputbox,
       textareabox,
       userbox,
+      announcebox,
       appfooter
     },
     methods: {

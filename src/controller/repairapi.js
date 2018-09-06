@@ -198,4 +198,12 @@ export default{
             })
         })
     },
+    getAnnounce () {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("announce", "GET").then(r => {
+                resolve(r)
+            })
+        })
+    },
 }
