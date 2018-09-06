@@ -6,11 +6,13 @@
     </view>
     <loginform ref="form" @submit="loginFormSubmit" @getotp="otpSubmit" @focus="oFocus" @blur="oBlur"
                :submitLoading="isSubmitLoading" :otpCountdown="otpCountdown" :otpLoading="otpLoading"/>
+    <appfooter />
   </div>
 </template>
 
 <script>
 import loginform from '@/components/loginform'
+import appfooter from '@/components/appfooter'
 import fyAccount from '@/controller/fyaccount'
 import repairApi from '@/controller/repairapi'
 
@@ -26,7 +28,7 @@ export default {
   },
 
   components: {
-    loginform
+    loginform, appfooter
   },
 
   methods: {
@@ -47,19 +49,14 @@ export default {
       fyAccount.login(e).then(v => {
         vm.$data.isSubmitLoading=false
         if (v.code == 200){
-          if (v.new){
-            repairApi.newConnect(v.info)
-            vm.jumpTo("../tickets/new/main")
-          } else {
-            repairApi.connect(v.info).then(r => {
-              fyAccount.updateInfo(r)
-              if (repairApi.data.info.type == 2){
-                vm.jumpTo("../tickets/list/main")
-              } else {
-                vm.jumpTo("../tickets/new/main")
-              }
-            })            
-          }
+          repairApi.connect(v.info).then(r => {
+            fyAccount.updateInfo(r)
+            if (repairApi.data.info.type > 1){
+              vm.jumpTo("../tickets/list/main")
+            } else {
+              vm.jumpTo("../tickets/new/main")
+            }
+          })
 
         } else {
             wx.showToast({

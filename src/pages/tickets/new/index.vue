@@ -1,37 +1,41 @@
 <template>
   <div style="overflow:hidden">
-    <userbox :disabled="apiData.new==null" :usertype="apiData.info.type" functype="0" :indata="fyData.info" @input="nameInput" />
-    <view class="weui-cells weui-panel">
-      <view class="weui-btn-area">
-        <view class="weui-label">设备</view>
-        <radio-group class="radio-group" @change="selectDevice">
-          <label class="radio" v-for="(item, index) in devices" :key="item.computer_id">
-              <radio color="#69b4ea" :value="item.computer_id"/> {{item.brand}} {{item.model}}
-            </label>
-          <label class="radio">
-              <radio color="#69b4ea" value="0"/> 新增
-            </label>
-        </radio-group>
-      </view>
-    </view>
-    <view class="weui-cells weui-panel" :class="{active: isPanel1Focus}" v-if="sendData.selectDevice==0">
-      <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="brandInput" label="品牌" name="brand" />
-      <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="modelInput" label="型号" name="model" />
-      <view class="weui-btn-area" style="display:flex">
-        <view style="width:100%">
-          <view class="weui-label">购买时间</view>
-          <picker mode="date" fields="month" start="2000-01" end="2020-09" @change="dateChange">
-            <view class="weui-cell_input weui-input">{{(sendData.newDeviceDate==null)?"":sendData.newDeviceDate}}</view>
-          </picker>
+    <userbox :disabled="apiData.info.type>=0" :usertype="apiData.info.type" functype="0" :indata="fyData.info" @input="nameInput" />
+    <div v-if="isAvailable">
+      <view class="weui-cells weui-panel">
+        <view class="weui-btn-area">
+          <view class="weui-label">设备</view>
+          <radio-group class="radio-group" @change="selectDevice">
+            <label class="radio" v-for="(item, index) in devices" :key="item.computer_id">
+                <radio color="#69b4ea" :value="item.computer_id"/> {{item.brand}} {{item.model}}
+              </label>
+            <label class="radio">
+                <radio color="#69b4ea" value="0"/> 新增
+              </label>
+          </radio-group>
         </view>
-        <view style="width:150%;padding:35px 0 0 0;color: #b2b2b2;text-align:right;">拆机可能导致保修失效</view>
       </view>
-    </view>
-    <view class="weui-cells weui-panel" :class="{active: isPanel2Focus}">
-      <textareabox @focus="textareaFocus" @blur="textareaBlur" @input="textareaInput" label="故障描述" name="username" placeholder="简单描述你遇到的问题..." />
-    </view>
-    <singlebtn :disabled="!isFinish" @submit="submit" text="立即报修" size="default" type="primary" />
+      <view class="weui-cells weui-panel" :class="{active: isPanel1Focus}" v-if="sendData.selectDevice==0">
+        <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="brandInput" label="品牌" name="brand" />
+        <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="modelInput" label="型号" name="model" />
+        <view class="weui-btn-area" style="display:flex">
+          <view style="width:100%">
+            <view class="weui-label">购买时间</view>
+            <picker mode="date" fields="month" start="2000-01" end="2020-09" @change="dateChange">
+              <view class="weui-cell_input weui-input">{{(sendData.newDeviceDate==null)?"":sendData.newDeviceDate}}</view>
+            </picker>
+          </view>
+          <view style="width:150%;padding:35px 0 0 0;color: #b2b2b2;text-align:right;">拆机可能导致保修失效</view>
+        </view>
+      </view>
+      <view class="weui-cells weui-panel" :class="{active: isPanel2Focus}">
+        <textareabox @focus="textareaFocus" @blur="textareaBlur" @input="textareaInput" label="故障描述" name="username" placeholder="简单描述你遇到的问题..." />
+      </view>
+      <singlebtn :disabled="!isFinish" @submit="submit" text="立即报修" size="default" type="primary" />
+    </div>
+    <view v-else class="weui-cells weui-panel" style="padding:25px; color:#b2b2b2;">{{errorText}}</view>
     <view style="height:10px"></view>
+    <appfooter />
   </div>
 </template>
 
@@ -40,6 +44,7 @@
   import inputbox from '@/components/form/inputbox'
   import textareabox from '@/components/form/textareabox'
   import userbox from '@/components/userbox'
+  import appfooter from '@/components/appfooter'
   import wxAccount from '@/controller/wxaccount'
   import fyAccount from '@/controller/fyaccount'
   import repairApi from '@/controller/repairapi'
@@ -48,6 +53,8 @@
       return {
         fyData: fyAccount.data,
         apiData: repairApi.data,
+        isAvailable: false,
+        errorText: "",
         isPanel1Focus: false,
         isPanel2Focus: false,
         devices: [],
@@ -65,7 +72,8 @@
       singlebtn,
       inputbox,
       textareabox,
-      userbox
+      userbox,
+      appfooter
     },
     methods: {
       nameInput: function(e) {
@@ -101,17 +109,35 @@
       submit: function(e) {
         var vm = this
         if (vm.isFinish) {
-          repairApi.newTicket(this.sendData).then(r => {
-            wx.reLaunch({
-              url: "../list/main"
+          if (vm.apiData.info.type == -1){
+            repairApi.newUser(this.sendData).then(r =>{
+              repairApi.newTicket(this.sendData).then(r => {
+                fyAccount.updateInfo(Object.assign(vm.fyData.info, {"name": this.sendData.name}))
+                vm.apiData.info.type = 0
+                wx.reLaunch({
+                  url: "../list/main"
+                })
+              })
+            }).catch(e => {
+              wx.showToast({
+                title: '提交失败',
+                icon: 'none',
+                duration: 2000
+              })
             })
-          }).catch(e => {
-            wx.showToast({
-              title: '提交失败',
-              icon: 'none',
-              duration: 2000
-            })
-          })
+          } else {
+            repairApi.newTicket(this.sendData).then(r => {
+              wx.reLaunch({
+                url: "../list/main"
+              })
+            }).catch(e => {
+              wx.showToast({
+                title: '提交失败',
+                icon: 'none',
+                duration: 2000
+              })
+            })            
+          }
         }
       }
     },
@@ -137,6 +163,15 @@
           wx.reLaunch({
             url: "/pages/tickets/list/main"
           })
+        }
+      })
+      repairApi.getAvailable().then(r => {
+        if (r.code != 200) {
+          vm.errorText = "抱歉，系统正忙，请稍后再试"
+        } else if (r.data == 0) {
+          vm.errorText = "抱歉，今日技术员都很忙哦，明天再试吧"
+        } else {
+          vm.isAvailable = true
         }
       })
       repairApi.getDevices().then(r => {

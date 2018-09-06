@@ -18,7 +18,8 @@ export default {
       backgroundTextStyle: 'dark',
       navigationBarBackgroundColor: '#fafafa',
       navigationBarTitleText: '飞扬维修',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#fafafa'
     },
   }
 }

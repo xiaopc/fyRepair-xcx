@@ -48,15 +48,18 @@ export default{
         return new Promise(function (resolve, reject){
             vm.query("login", "POST", e).then(r => {
                 if (r.code == 200){
-                    vm.data.info.type = r.basic.type
+                    if (e.new){
+                        vm.data.info.type = -1  // new user
+                    } else {
+                        vm.data.info.type = r.basic.type
+                    }
                     wx.setStorageSync("repairData", vm.data)
                     resolve(r.profile)
+                } else {
+                    reject(new Error(r.code))
                 }
             })
         })
-    },
-    newConnect (e) {
-        this.data.new = e
     },
     getotp (e) {
         var vm = this
@@ -94,12 +97,12 @@ export default{
             })
         })
 
-        //wx.removeStorage({key: "repairData", success: function (res) {} })
-        //return new Promise(function (resolve, reject){
-        //    vm.query("logout", "GET").then(r => {
-        //        resolve(r)
-        //    })
-        //})    
+        wx.removeStorage({key: "repairData", success: function (res) {} })
+        return new Promise(function (resolve, reject){
+            vm.query("logout", "GET").then(r => {
+                resolve(r)
+            })
+        })    
     },
     getDevices (){
         var vm = this
@@ -173,5 +176,26 @@ export default{
                 }
             })
         })
-    }
+    },
+    newUser (e) {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("user/new", "POST", e).then(r => {
+                console.log(r)
+                if (r.code == 200){
+                    resolve(r.data)
+                } else {
+                    reject(new Error(r.code))
+                }
+            })
+        })
+    },
+    getAvailable () {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("status/available", "GET").then(r => {
+                resolve(r)
+            })
+        })
+    },
 }

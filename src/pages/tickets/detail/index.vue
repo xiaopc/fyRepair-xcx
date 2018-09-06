@@ -6,7 +6,7 @@
         <view class="weui-label">{{ticketData.time}}</view>
       </view>
       <view class="weui-btn-area" v-if="!!ticketData.name">
-        <view class="weui-label">{{ (repairData.info.type==2) ? "机主" : "技术员"}}</view>
+        <view class="weui-label">{{ (repairData.info.type>1) ? "机主" : "技术员"}}</view>
         <view class="cell-text">{{ticketData.name}} {{(ticketData.vip==1)?"(会员)":""}}</view>
       </view>
       <view class="weui-btn-area inline" v-if="!!ticketData.name">
@@ -37,15 +37,17 @@
       <singlebtn text="确认完成" type="primary" v-if="repairData.info.type!=2 && ticketData.status>=3" @submit="handleFinish" :disabled="ticketData.status==4" />
     </view>
     <view style="height:30px"></view>
+    <appfooter />
   </div>
 </template>
 
 <script>
   import repairApi from '@/controller/repairapi'
   import singlebtn from '@/components/singlebtn'
+  import appfooter from '@/components/appfooter'
   export default {
     components: {
-      singlebtn
+      singlebtn, appfooter
     },
     data() {
       return {

@@ -22,7 +22,7 @@
         })
       },
       checkUserType: function() {
-        if (repairApi.data.info.type == 2) {
+        if (repairApi.data.info.type > 1) {
           this.redirect(2)
         } else {
           this.redirect(1)
