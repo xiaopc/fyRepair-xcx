@@ -15,10 +15,13 @@ import loginform from '@/components/loginform'
 import appfooter from '@/components/appfooter'
 import fyAccount from '@/controller/fyaccount'
 import repairApi from '@/controller/repairapi'
+import wxAccount from '@/controller/wxaccount'
 
 export default {
   data () {
     return {
+      fyData: fyAccount.data,
+      apiData: repairApi.data,
       editing: false,
       isSubmitLoading: false,
       otpCountdown: 0,
@@ -32,11 +35,21 @@ export default {
   },
 
   methods: {
-    jumpTo: function(e){
+    redirect: function(e) {
+      wx.hideLoading()
+      var url = ["/pages/login/main", "/pages/tickets/new/main", "/pages/tickets/list/main"]
       wx.reLaunch({
-        url: e
+        url: url[e]
       })
     },
+    checkUserType: function() {
+      if (repairApi.data.info.type > 1) {
+        this.redirect(2)
+      } else {
+        this.redirect(1)
+      }
+    },
+    // above are methods from landing page
     oFocus: function(e){
       this.editing = true
     },
@@ -51,13 +64,8 @@ export default {
         if (v.code == 200){
           repairApi.connect(v.info).then(r => {
             fyAccount.updateInfo(r)
-            if (repairApi.data.info.type > 1){
-              vm.jumpTo("../tickets/list/main")
-            } else {
-              vm.jumpTo("../tickets/new/main")
-            }
+            vm.checkUserType()
           })
-
         } else {
             wx.showToast({
               title: '登录失败:'+v.info,
@@ -96,10 +104,23 @@ export default {
     }
   },
 
-  onLoad () {
+  onLoad() {
+    var vm = this
     fyAccount.init()
     repairApi.init()
-  }
+    if (vm.fyData.login) {
+      vm.checkUserType()
+    } else {
+      wxAccount.login().then(r => {
+        return repairApi.checkWxCode(r)
+      }).then(r => {
+        fyAccount.updateInfo(r)
+        vm.checkUserType()
+      }).catch(e => {
+        // stay here
+      })
+    }
+  },
 
 }
 </script>

@@ -14,5 +14,8 @@ export default {
     },
     server: {
         apiBase: "https://repair.fyscu.com/api/"
+    },
+    tucao: {
+        id: 33234
     }
 }

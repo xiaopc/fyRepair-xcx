@@ -93,16 +93,19 @@ export default{
             vm.data.apiCookies = null
             wx.clearStorageSync()
             wx.reLaunch({
-            url: "/pages/login/main"
+                url: "/pages/login/main"
             })
+
         })
 
+        /*
         wx.removeStorage({key: "repairData", success: function (res) {} })
         return new Promise(function (resolve, reject){
             vm.query("logout", "GET").then(r => {
                 resolve(r)
             })
-        })    
+        })   
+        */ 
     },
     getDevices (){
         var vm = this
@@ -194,6 +197,14 @@ export default{
         var vm = this
         return new Promise(function (resolve, reject){
             vm.query("status/available", "GET").then(r => {
+                resolve(r)
+            })
+        })
+    },
+    getAnnounce () {
+        var vm = this
+        return new Promise(function (resolve, reject){
+            vm.query("announce", "GET").then(r => {
                 resolve(r)
             })
         })

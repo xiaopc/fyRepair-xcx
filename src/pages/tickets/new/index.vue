@@ -1,6 +1,7 @@
 <template>
   <div style="overflow:hidden">
     <userbox :disabled="apiData.info.type>=0" :usertype="apiData.info.type" functype="0" :indata="fyData.info" @input="nameInput" />
+    <announcebox />
     <div v-if="isAvailable">
       <view class="weui-cells weui-panel">
         <view class="weui-btn-area">
@@ -44,6 +45,7 @@
   import inputbox from '@/components/form/inputbox'
   import textareabox from '@/components/form/textareabox'
   import userbox from '@/components/userbox'
+  import announcebox from '@/components/announcebox'
   import appfooter from '@/components/appfooter'
   import wxAccount from '@/controller/wxaccount'
   import fyAccount from '@/controller/fyaccount'
@@ -73,9 +75,22 @@
       inputbox,
       textareabox,
       userbox,
+      announcebox,
       appfooter
     },
     methods: {
+      refreshStatus: function(e) {
+        var vm = this
+        repairApi.getAvailable().then(r => {
+          if (r.code != 200) {
+            vm.errorText = "抱歉，系统正忙，请稍后再试"
+          } else if (r.data == 0) {
+            vm.errorText = "抱歉，目前技术员都很忙哦，请稍后再试"
+          } else {
+            vm.isAvailable = true
+          }
+        })
+      },
       nameInput: function(e) {
         this.sendData.name = e
       },
@@ -165,15 +180,7 @@
           })
         }
       })
-      repairApi.getAvailable().then(r => {
-        if (r.code != 200) {
-          vm.errorText = "抱歉，系统正忙，请稍后再试"
-        } else if (r.data == 0) {
-          vm.errorText = "抱歉，今日技术员都很忙哦，明天再试吧"
-        } else {
-          vm.isAvailable = true
-        }
-      })
+      vm.refreshStatus()
       repairApi.getDevices().then(r => {
         vm.devices = r
       }).catch(e => {
@@ -183,6 +190,11 @@
           duration: 2000
         })
       })
+    },
+    onPullDownRefresh() {
+      var vm = this
+      vm.refreshStatus()
+      wx.stopPullDownRefresh()
     },
     onShow() {
     },

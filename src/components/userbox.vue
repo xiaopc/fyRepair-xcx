@@ -26,6 +26,7 @@
 <script>
   import inputbox from '@/components/form/inputbox'
   import repairApi from '@/controller/repairapi'
+  import fyAccount from '@/controller/fyaccount'
   export default {
     props: ['disabled', 'usertype', 'functype', 'indata', 'text'],
     components: {
@@ -67,6 +68,7 @@
             break;
           case "1":
             repairApi.logout()
+            fyAccount.logout()
             break;
         }
       }
