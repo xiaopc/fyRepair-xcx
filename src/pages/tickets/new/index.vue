@@ -79,6 +79,18 @@
       appfooter
     },
     methods: {
+      refreshStatus: function(e) {
+        var vm = this
+        repairApi.getAvailable().then(r => {
+          if (r.code != 200) {
+            vm.errorText = "抱歉，系统正忙，请稍后再试"
+          } else if (r.data == 0) {
+            vm.errorText = "抱歉，目前技术员都很忙哦，请稍后再试"
+          } else {
+            vm.isAvailable = true
+          }
+        })
+      },
       nameInput: function(e) {
         this.sendData.name = e
       },
@@ -168,15 +180,7 @@
           })
         }
       })
-      repairApi.getAvailable().then(r => {
-        if (r.code != 200) {
-          vm.errorText = "抱歉，系统正忙，请稍后再试"
-        } else if (r.data == 0) {
-          vm.errorText = "抱歉，今日技术员都很忙哦，明天再试吧"
-        } else {
-          vm.isAvailable = true
-        }
-      })
+      vm.refreshStatus()
       repairApi.getDevices().then(r => {
         vm.devices = r
       }).catch(e => {
@@ -186,6 +190,11 @@
           duration: 2000
         })
       })
+    },
+    onPullDownRefresh() {
+      var vm = this
+      vm.refreshStatus()
+      wx.stopPullDownRefresh()
     },
     onShow() {
     },

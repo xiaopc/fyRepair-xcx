@@ -2,8 +2,8 @@
   <view v-if="show" class="weui-cells weui-panel">
     <view class="weui-btn-area inline">
       <view style="width:100%">
-          <view class="weui-label">通知 ({{announcements.length}})</view>
-          <view class="cell-text">
+          <view class="weui-label">公告 ({{announcements.length}})</view>
+          <view class="cell-text" style="padding-top:5px">
             <swiper autoplay="true" interval="5000" duration="500" vertical="true" style="height: 70rpx">
               <block v-for="(announce, index) in announcements" :key="index">
                 <swiper-item>

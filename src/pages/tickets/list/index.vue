@@ -45,8 +45,8 @@
     },
     methods: {
       login() {
-        wx.navigateTo({
-          url: "/pages/my/login/main"
+        wx.reLaunch({
+          url: "/pages/login/main"
         })
       },
       jumpToDetail(index) {

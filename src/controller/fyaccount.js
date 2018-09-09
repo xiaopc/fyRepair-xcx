@@ -58,7 +58,7 @@ export default{
         var vm = this
         vm.data.login = false
         vm.data.ssoCookies = null
-        //wx.removeStorage({key: "fyAccount", success: function (res) {} })
+        wx.removeStorageSync({key: "fyAccount", success: function (res) {} })
     },
     updateInfo (e) {
         accountData.login = true
