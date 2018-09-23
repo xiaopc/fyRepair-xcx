@@ -26,7 +26,7 @@
               <view class="weui-cell_input weui-input">{{(sendData.newDeviceDate==null)?"":sendData.newDeviceDate}}</view>
             </picker>
           </view>
-          <view style="width:150%;padding:35px 0 0 0;color: #b2b2b2;text-align:right;">拆机可能导致保修失效</view>
+          <view style="width:150%;padding:37px 0 0 0;color: #b2b2b2;text-align:right;font-size:30rpx;">拆机可能失去原厂报修</view>
         </view>
       </view>
       <view class="weui-cells weui-panel" :class="{active: isPanel2Focus}">
@@ -35,8 +35,8 @@
       <singlebtn :disabled="!isFinish" @submit="submit" text="立即报修" size="default" type="primary" />
     </div>
     <view v-else class="weui-cells weui-panel" style="padding:25px; color:#b2b2b2;">{{errorText}}</view>
-    <view style="height:10px"></view>
     <appfooter />
+    <view style="height:10px"></view>
   </div>
 </template>
 
@@ -82,11 +82,25 @@
       refreshStatus: function(e) {
         var vm = this
         repairApi.getAvailable().then(r => {
-          if (r.code != 200) {
+          if (r.code >= 500) {
             vm.errorText = "抱歉，系统正忙，请稍后再试"
-          } else if (r.data == 0) {
+          } else if (r.code >= 400) {
+            wx.showModal({
+              content: '登录已失效，请重新登录',
+              showCancel: false,
+              success: function(res) {
+                wx.reLaunch({
+                  url: "/pages/login/main"
+                })
+              }
+            })
+          } else if (r.data <= 0) {
             vm.errorText = "抱歉，目前技术员都很忙哦，请稍后再试"
           } else {
+            vm.isAvailable = true
+          }
+          // VIP
+          if (vm.apiData.info.type == 1) {
             vm.isAvailable = true
           }
         })
@@ -135,7 +149,7 @@
               })
             }).catch(e => {
               wx.showToast({
-                title: '提交失败',
+                title: '提交失败('+ e + ')',
                 icon: 'none',
                 duration: 2000
               })
@@ -147,7 +161,7 @@
               })
             }).catch(e => {
               wx.showToast({
-                title: '提交失败',
+                title: '提交失败(' + e + ')',
                 icon: 'none',
                 duration: 2000
               })
@@ -185,7 +199,7 @@
         vm.devices = r
       }).catch(e => {
         wx.showToast({
-          title: '获取设备信息失败',
+          title: '获取设备信息失败(' + e + ')',
           icon: 'none',
           duration: 2000
         })

@@ -36,8 +36,8 @@
       <singlebtn text="取消报修" type="warn" v-if="repairData.info.type!=2 && ticketData.status<3" @submit="handleCancel" :disabled="ticketData.status==2" />
       <singlebtn text="确认完成" type="primary" v-if="repairData.info.type!=2 && ticketData.status>=3" @submit="handleFinish" :disabled="ticketData.status==4" />
     </view>
-    <view style="height:30px"></view>
     <appfooter />
+    <view style="height:30px"></view>
   </div>
 </template>
 
@@ -141,7 +141,7 @@
             console.log(v)
           } else {
             wx.showToast({
-              title: '获取详情失败',
+              title: '获取详情失败(' + v.code +')',
               icon: 'none',
               duration: 2000
             })

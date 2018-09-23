@@ -95,8 +95,9 @@ export default {
 
       }).catch(e=>{
         vm.$data.otpLoading=false
+        console.log(e)
         wx.showToast({
-          title: '获取验证码失败',
+          title: '获取失败('+ e +')',
           icon: 'none',
           duration: 2000
         })
@@ -108,18 +109,23 @@ export default {
     var vm = this
     fyAccount.init()
     repairApi.init()
-    if (vm.fyData.login) {
-      vm.checkUserType()
-    } else {
+    wx.showLoading({
+      title: '登录中',
+      mask: true
+    })
+    //if (vm.fyData.login) {
+    //  vm.checkUserType()
+    //} else {
       wxAccount.login().then(r => {
         return repairApi.checkWxCode(r)
       }).then(r => {
+        wx.hideLoading()
         fyAccount.updateInfo(r)
         vm.checkUserType()
       }).catch(e => {
-        // stay here
+        wx.hideLoading()
       })
-    }
+    //}
   },
 
 }
