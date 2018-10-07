@@ -10,6 +10,7 @@ var accountData = {
         cell: null,
         email: null,
         qq: null,
+        vip: 0,
     }
 }
 
@@ -58,7 +59,7 @@ export default{
         var vm = this
         vm.data.login = false
         vm.data.ssoCookies = null
-        wx.removeStorageSync({key: "fyAccount", success: function (res) {} })
+        wx.removeStorageSync("fyAccount")
     },
     updateInfo (e) {
         accountData.login = true

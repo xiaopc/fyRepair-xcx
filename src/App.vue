@@ -1,6 +1,17 @@
 <script>
+import config from '@/config/config'
+
 export default {
   created () {
+  },
+  onLaunch () {
+    var res = wx.getSystemInfoSync()
+    wx.reportAnalytics('cold_start', {
+        version: config.version,
+        wx_version: res.version,
+        sys_version: res.system,
+        client: res.brand +  "-" + res.model,
+    })
   }
 }
 </script>

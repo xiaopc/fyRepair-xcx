@@ -26,7 +26,7 @@
               <view class="weui-cell_input weui-input">{{(sendData.newDeviceDate==null)?"":sendData.newDeviceDate}}</view>
             </picker>
           </view>
-          <view style="width:150%;padding:37px 0 0 0;color: #b2b2b2;text-align:right;font-size:30rpx;">拆机可能失去原厂报修</view>
+          <view style="width:150%;padding:37px 0 0 0;color: #b2b2b2;text-align:right;font-size:30rpx;">拆机可能失去原厂保修</view>
         </view>
       </view>
       <view class="weui-cells weui-panel" :class="{active: isPanel2Focus}">
@@ -84,23 +84,9 @@
         repairApi.getAvailable().then(r => {
           if (r.code >= 500) {
             vm.errorText = "抱歉，系统正忙，请稍后再试"
-          } else if (r.code >= 400) {
-            wx.showModal({
-              content: '登录已失效，请重新登录',
-              showCancel: false,
-              success: function(res) {
-                wx.reLaunch({
-                  url: "/pages/login/main"
-                })
-              }
-            })
           } else if (r.data <= 0) {
-            vm.errorText = "抱歉，目前技术员都很忙哦，请稍后再试"
+            vm.errorText = "抱歉，目前没有空闲技术员，请稍后再试"
           } else {
-            vm.isAvailable = true
-          }
-          // VIP
-          if (vm.apiData.info.type == 1) {
             vm.isAvailable = true
           }
         })
