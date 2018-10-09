@@ -19,8 +19,8 @@
         <view class="cell-text">{{ticket.computer.brand}} {{ticket.computer.model}}</view>
       </view>
     </view>
-    <view style="height:30px"></view>
     <appfooter />
+    <view style="height:30px"></view>
   </div>
 </template>
 
@@ -61,7 +61,7 @@
         for (var ticket in this.tickets) {
           counter[this.tickets[ticket].status]++
         }
-        console.log(counter)
+        //console.log(counter)
         return counter[1] + " " + this.status[1] + " " + counter[3] + " " + this.status[3] + " " + counter[4] + " " + this.status[4]
       }
     },

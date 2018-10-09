@@ -14,7 +14,10 @@
           </view>
           <view class="weui-btn-area" v-if="disabled || usertype > 1">
             <view class="weui-label">{{ (usertype>1)?"统计" : "姓名" }}</view>
-            <view class="cell-text" style="word-spacing:10rpx;">{{ (usertype>1)?text : indata.name }}</view>
+            <view class="cell-text" style="word-spacing:10rpx;">
+              {{ (usertype>1)?text : indata.name }}
+              <image v-if="(usertype<2) && fyData.info.vip.length>0" id="vipIcon" src="/static/images/vip.png" />
+            </view>
           </view>
           <inputbox v-else @focus="oFocus" @blur="oBlur" @input="cellInput" label="姓名" name="name" maxlength="8" />
         </view>
@@ -34,6 +37,7 @@
     },
     data() {
       return {
+        fyData: fyAccount.data,
         disabled: true,
         usertype: 0, // 0 for user, 2 for staff
         functype: 0, // 0 for more, 2 for logout
@@ -84,5 +88,11 @@
 <style>
   .inline {
     display: flex;
+  }
+  #vipIcon {
+    width: 47px;
+    height: 40px;
+    display: inline-block;
+    margin-bottom: -30rpx;
   }
 </style>

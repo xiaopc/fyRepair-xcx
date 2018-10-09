@@ -4,6 +4,10 @@ export default {
             wx.login({
                 success: (res) => {
                     resolve(res)
+                },
+                timeout: 3000,
+                fail: (e) => {
+                    reject(new Error(500))
                 }
             })
         })

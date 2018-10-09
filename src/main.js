@@ -21,5 +21,10 @@ export default {
       navigationBarTextStyle: 'black',
       backgroundColor: '#fafafa'
     },
+    networkTimeout: {
+      request: 5000,
+      downloadFile: 10000,
+      uploadFile: 10000,
+    }
   }
 }

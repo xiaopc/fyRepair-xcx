@@ -48,7 +48,7 @@ export default{
         return new Promise(function (resolve, reject){
             vm.query("login", "POST", e).then(r => {
                 if (r.code == 200){
-                    if (e.new){
+                    if (r.new){
                         vm.data.info.type = -1  // new user
                     } else {
                         vm.data.info.type = r.basic.type
@@ -89,9 +89,9 @@ export default{
     },
     logout () {
         var vm = this
-        vm.query("wechat/logout", "GET").then(r => {
+        vm.query("logout", "GET").then(r => {
             vm.data.apiCookies = null
-            wx.clearStorageSync()
+            wx.clearStorageSync("repairData")
             wx.reLaunch({
                 url: "/pages/login/main"
             })
