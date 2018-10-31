@@ -3,16 +3,12 @@
     <userbox :disabled="true" :usertype="apiData.info.type" functype="1" :indata="fyData.info" :text="staffText" />
     <view class="weui-cells weui-panel" v-for="(ticket, index) in tickets" @click="jumpToDetail(index)">
       <view class="weui-btn-area">
-        <view class="cell-text" style="line-height:1;min-height:25px;height:25px;" :class="statusColor[ticket.status]">{{status[ticket.status]}}</view>
+        <view class="cell-text" style="line-height:1;min-height:25px;" :class="statusColor[ticket.status]">{{status[ticket.status]}}</view>
         <view class="weui-label" style="color:#e0e0e0;">{{ticket.time}}</view>
       </view>
       <view class="weui-btn-area" v-if="!!ticket.name">
-        <view class="weui-label">{{ (apiData.info.type==2) ? "机主" : "技术员"}}</view>
-        <view class="cell-text">{{ticket.name}}</view>
-      </view>
-      <view class="weui-btn-area" v-if="!!ticket.name">
-        <view class="weui-label">联系方式</view>
-        <view class="cell-text">{{ticket.phone}}</view>
+        <view class="weui-label">{{ (apiData.info.type>1) ? "机主" : "技术员"}}</view>
+        <view class="cell-text">{{ticket.name}} {{ticket.phone}}</view>
       </view>
       <view class="weui-btn-area">
         <view class="weui-label">设备</view>
@@ -35,7 +31,7 @@
         fyData: fyAccount.data,
         apiData: repairApi.data,
         tickets: [],
-        status: ['待分配', '待确认', '已取消', '维修中', '已完成', '重新分配'],
+        status: ['等待系统分配', '等待技术员确认', '维修单已取消', '正在维修中', '维修已完成', '重新分配中'],
         statusColor: ['blue', 'blue', 'gray', 'blue', 'black', 'blue'],
         lastUpdate: null
       }

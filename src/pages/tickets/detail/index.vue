@@ -2,8 +2,12 @@
   <div>
     <view class="weui-cells weui-panel" v-if="ticketData!=null">
       <view class="weui-btn-area">
-        <view class="cell-text" style="line-height:1;min-height:25px;height:25px;" :class="statusColor[ticketData.status]">{{status[ticketData.status]}}</view>
+        <view class="cell-text" style="line-height:1;min-height:25px;" :class="statusColor[ticketData.status]">{{status[ticketData.status]}}</view>
         <view class="weui-label">{{ticketData.time}}</view>
+      </view>
+      <view class="weui-btn-area">
+        <view class="weui-label">单号</view>
+        <view class="cell-text">{{ticketId}}</view>
       </view>
       <view class="weui-btn-area" v-if="!!ticketData.name">
         <view class="weui-label">{{ (repairData.info.type>1) ? "机主" : "技术员"}}</view>
@@ -31,11 +35,6 @@
         <view class="cell-text" style="line-height:1.5;padding-top:22rpx;">{{ticketData.description}}</view>
       </view>
     </view>
-    <view v-if="ticketData!=null">
-      <singlebtn text="确认接单" type="primary" v-if="repairData.info.type==2 && ticketData.status==1" @submit="handleAccept" />
-      <singlebtn text="取消报修" type="warn" v-if="repairData.info.type!=2 && ticketData.status<3" @submit="handleCancel" :disabled="ticketData.status==2" />
-      <singlebtn text="确认完成" type="primary" v-if="repairData.info.type!=2 && ticketData.status>=3" @submit="handleFinish" :disabled="ticketData.status==4" />
-    </view>
     <appfooter />
     <view style="height:30px"></view>
   </div>
@@ -54,7 +53,7 @@
         repairData: repairApi.data,
         ticketId: null,
         ticketData: null,
-        status: ['待分配', '待确认', '已取消', '维修中', '已完成', '重新分配'],
+        status: ['待分配', '待确认', '已取消', '维修中', '已完成', '重新分配'], // 目前只存在 0 (2) 3 4
         statusColor: ['blue', 'blue', 'gray', 'blue', 'black', 'blue'],
       }
     },

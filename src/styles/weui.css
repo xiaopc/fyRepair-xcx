@@ -7,17 +7,17 @@ page{line-height:1.6;font-family:-apple-system-font,Helvetica Neue,sans-serif}ic
 
 button::after, .weui-cells::before, .weui-cells::after{ border: none; }
 .weui-btn-area{
-    margin:.6em;
+    margin:20rpx;
 }
 .weui-btn-area:first-child{
-    margin:.8em .6em .6em .6em;
+    margin:30rpx 20rpx 20rpx 20rpx;
 }
 .weui-btn-area:last-child{
-    margin:.6em .6em .8em .6em;
+    margin:20rpx 20rpx 30rpx 20rpx;
 }
 
 .weui-btn-area.inline-btn{
-    margin:.6em;
+    margin:20rpx;
     width:40%;
     padding:15px 0;
 }
@@ -92,8 +92,7 @@ button::after, .weui-cells::before, .weui-cells::after{ border: none; }
 .weui-input{
     line-height:2.5;
     font-size:40rpx;
-    min-height:40px;
-    height:40px;
+    min-height:80rpx;
 }
 
 .weui-panel{
