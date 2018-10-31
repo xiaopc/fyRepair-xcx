@@ -41,9 +41,9 @@
     computed: {
       placeholderShow: function() {
         var r = !((this.textval && 0 != this.textval.length) || this.focus)
-        console.log("textval:" + this.textval)
-        console.log("focus:" + this.focus)
-        console.log("res:" + r)
+        //console.log("textval:" + this.textval)
+        //console.log("focus:" + this.focus)
+        //console.log("res:" + r)
         return r
       }
     }
@@ -64,9 +64,8 @@
     position: relative;
   }
   .weui-textarea {
-    padding-top: 10rpx;
-    min-height: 40px;
-    line-height: 1.5;
+    min-height: 80rpx;
+    line-height: 2.5;
     font-size: 40rpx;
   }
   .weui-textarea-placeholder {

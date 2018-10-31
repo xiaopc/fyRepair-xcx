@@ -3,7 +3,7 @@
     <userbox :disabled="apiData.info.type>=0" :usertype="apiData.info.type" functype="0" :indata="fyData.info" @input="nameInput" />
     <announcebox />
     <div v-if="isAvailable">
-      <view class="weui-cells weui-panel">
+      <view class="weui-cells weui-panel" name="selectDevice">
         <view class="weui-btn-area">
           <view class="weui-label">设备</view>
           <radio-group class="radio-group" @change="selectDevice">
@@ -16,22 +16,25 @@
           </radio-group>
         </view>
       </view>
+
       <view class="weui-cells weui-panel" :class="{active: isPanel1Focus}" v-if="sendData.selectDevice==0">
-        <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="brandInput" label="品牌" name="brand" />
-        <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="modelInput" label="型号" name="model" />
+        <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="brandInput" label="品牌" name="newDeviceBrand" />
+        <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="modelInput" label="型号" name="newDeviceModel" />
         <view class="weui-btn-area" style="display:flex">
           <view style="width:100%">
             <view class="weui-label">购买时间</view>
-            <picker mode="date" fields="month" start="2000-01" end="2020-09" @change="dateChange">
+            <picker mode="date" fields="month" start="2000-01" end="2020-09" @change="dateChange" name="newDeviceDate">
               <view class="weui-cell_input weui-input">{{(sendData.newDeviceDate==null)?"":sendData.newDeviceDate}}</view>
             </picker>
           </view>
           <view style="width:150%;padding:37px 0 0 0;color: #b2b2b2;text-align:right;font-size:30rpx;">拆机可能失去原厂保修</view>
         </view>
       </view>
+
       <view class="weui-cells weui-panel" :class="{active: isPanel2Focus}">
         <textareabox @focus="textareaFocus" @blur="textareaBlur" @input="textareaInput" label="故障描述" name="username" placeholder="简单描述你遇到的问题..." />
       </view>
+
       <singlebtn :disabled="!isFinish" @submit="submit" text="立即报修" size="default" type="primary" />
     </div>
     <view v-else class="weui-cells weui-panel" style="padding:25px; color:#b2b2b2;">{{errorText}}</view>
@@ -50,6 +53,7 @@
   import wxAccount from '@/controller/wxaccount'
   import fyAccount from '@/controller/fyaccount'
   import repairApi from '@/controller/repairapi'
+
   export default {
     data() {
       return {
@@ -158,7 +162,7 @@
     },
     computed: {
       isFinish: function() {
-        if (this.apiData.new && (this.sendData.name == null || this.sendData.name == "")) return false
+        if (this.apiData.new && (this.sendData.name == null || this.sendData.name == "" || this.sendData.name == "null")) return false
         if (this.sendData.detail == null || this.sendData.detail == "") return false
         if (this.sendData.selectDevice == null) return false
         if (this.sendData.selectDevice == 0) {
