@@ -43,7 +43,7 @@ export default {
       })
     },
     checkUserType: function() {
-      if (repairApi.data.info.type > 1) {
+      if (repairApi.data.basic.staff_id > 0) {
         this.redirect(2)
       } else {
         this.redirect(1)
@@ -113,19 +113,15 @@ export default {
       title: '登录中',
       mask: true
     })
-    //if (vm.fyData.login) {
-    //  vm.checkUserType()
-    //} else {
-      wxAccount.login().then(r => {
-        return repairApi.checkWxCode(r)
-      }).then(r => {
-        wx.hideLoading()
-        fyAccount.updateInfo(r)
-        vm.checkUserType()
-      }).catch(e => {
-        wx.hideLoading()
-      })
-    //}
+    wxAccount.login().then(r => {
+      return repairApi.checkWxCode(r)
+    }).then(r => {
+      wx.hideLoading()
+      fyAccount.updateInfo(r)
+      vm.checkUserType()
+    }).catch(e => {
+      wx.hideLoading()
+    })
   },
 
 }

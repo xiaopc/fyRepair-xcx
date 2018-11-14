@@ -13,6 +13,7 @@ export default {
     // 页面前带有 ^ 符号的，会被编译成首页，其他页面可以选填，我们会自动把 webpack entry 里面的入口页面加进去
     pages: ['^pages/login/main',
             'pages/tickets/new/main', 'pages/tickets/list/main', 'pages/tickets/detail/main',
+            'pages/admin/main',
             ],
     window: {
       backgroundTextStyle: 'dark',
@@ -25,6 +26,9 @@ export default {
       request: 5000,
       downloadFile: 10000,
       uploadFile: 10000,
-    }
+    },
+    navigateToMiniProgramAppIdList: [
+      "wx8abaf00ee8c3202e"
+    ],
   }
 }

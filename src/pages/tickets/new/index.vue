@@ -1,6 +1,6 @@
 <template>
   <div style="overflow:hidden">
-    <userbox :disabled="apiData.info.type>=0" :usertype="apiData.info.type" functype="0" :indata="fyData.info" @input="nameInput" />
+    <userbox :disabled="!apiData.new" :usertype="(apiData.basic.staff_id > 0) ? 2 : 0" functype="0" :indata="fyData.info" @input="nameInput" />
     <announcebox />
     <div v-if="isAvailable">
       <view class="weui-cells weui-panel" name="selectDevice">
@@ -128,11 +128,11 @@
       submit: function(e) {
         var vm = this
         if (vm.isFinish) {
-          if (vm.apiData.info.type == -1){
+          if (vm.apiData.new){
             repairApi.newUser(this.sendData).then(r =>{
               repairApi.newTicket(this.sendData).then(r => {
                 fyAccount.updateInfo(Object.assign(vm.fyData.info, {"name": this.sendData.name}))
-                vm.apiData.info.type = 0
+                vm.apiData.new = false
                 wx.reLaunch({
                   url: "../list/main"
                 })
