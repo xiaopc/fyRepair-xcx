@@ -2,21 +2,23 @@
   <div>
     <view class="weui-cells weui-panel" v-if="ticketData!=null">
       <view class="weui-btn-area">
-        <view class="cell-text" style="line-height:1;min-height:25px;" :class="statusColor[ticketData.status]">{{status[ticketData.status]}}</view>
-        <view class="weui-label">{{ticketData.time}}</view>
+        <view class="cell-text" style="line-height:1;min-height:25px;" :class="statusColor[ticketData.basic.status]">{{status[ticketData.basic.status]}}</view>
+        <view class="weui-label">{{ticketData.basic.time}}</view>
       </view>
       <view class="weui-btn-area">
         <view class="weui-label">单号</view>
         <view class="cell-text">{{ticketId}}</view>
       </view>
-      <view class="weui-btn-area" v-if="!!ticketData.name">
-        <view class="weui-label">{{ (repairData.info.type>1) ? "机主" : "技术员"}}</view>
-        <view class="cell-text">{{ticketData.name}} {{(ticketData.vip==1)?"(会员)":""}}</view>
+      <view class="weui-btn-area" v-if="!!ticketData.staff">
+        <view class="weui-label">{{ (repairData.basic.staff_id > 0) ? "机主" : "技术员"}}</view>
+        <view class="cell-text">
+          {{ subject.name }} {{(ticketData.basic.vip==1)?"(会员)":""}}
+        </view>
       </view>
-      <view class="weui-btn-area inline" v-if="!!ticketData.name">
+      <view class="weui-btn-area inline" v-if="!!ticketData.staff">
         <view style="width:100%">
           <view class="weui-label">联系方式</view>
-          <view class="cell-text">{{ticketData.phone}}</view>
+          <view class="cell-text">{{ subject.phone }}</view>
         </view>
         <view class="weui-btn-area inline-btn" style="height:23px;margin-top:3px;">
           <button @click="handlePhoneClick" class="weui-btn inline">复制</button>
@@ -32,7 +34,7 @@
       </view>
       <view class="weui-btn-area">
         <view class="weui-label">问题详情</view>
-        <view class="cell-text" style="line-height:1.5;padding-top:22rpx;">{{ticketData.description}}</view>
+        <view class="cell-text" style="line-height:1.5;padding-top:22rpx;">{{ticketData.extend.description}}</view>
       </view>
     </view>
     <appfooter />
@@ -67,12 +69,12 @@
               switch (res.tapIndex) {
                 case 0:
                   wx.setClipboardData({
-                    data: vm.ticketData.phone
+                    data: vm.subject.phone
                   })
                   break;
                 case 1:
                   wx.makePhoneCall({
-                    phoneNumber: vm.ticketData.phone
+                    phoneNumber: vm.subject.phone
                   })
                   break;
               }
@@ -146,6 +148,12 @@
             })
           }
         })
+      }
+    },
+    computed: {
+      subject: function(){
+        if (this.repairData == null || this.ticketData == null) return {}
+        return (this.repairData.basic.staff_id > 0) ? this.ticketData.user : this.ticketData.staff
       }
     },
     created() {

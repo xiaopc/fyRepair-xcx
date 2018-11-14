@@ -10,7 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "less": "^3.0.1",
+    "less": "^3.8.1",
     "less-loader": "^4.1.0",
     "mpvue": "^1.0.6"
   },
