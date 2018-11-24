@@ -1,5 +1,5 @@
 export default {
-    version: "1.2.0",
+    version: "1.2.1",
     sso: {
         appId: 1010,
         apiBase: "https://sso.fyscu.com/api/",
