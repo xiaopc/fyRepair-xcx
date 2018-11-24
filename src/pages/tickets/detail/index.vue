@@ -12,7 +12,7 @@
       <view class="weui-btn-area" v-if="!!ticketData.staff">
         <view class="weui-label">{{ (repairData.basic.staff_id > 0) ? "机主" : "技术员"}}</view>
         <view class="cell-text">
-          {{ subject.name }} {{(ticketData.basic.vip==1)?"(会员)":""}}
+          {{ subject.name }} {{((repairData.basic.staff_id > 0) && (ticketData.basic.vip == 1)) ? "(会员)" : ""}}
         </view>
       </view>
       <view class="weui-btn-area inline" v-if="!!ticketData.staff">
@@ -36,6 +36,10 @@
         <view class="weui-label">问题详情</view>
         <view class="cell-text" style="line-height:1.5;padding-top:22rpx;">{{ticketData.extend.description}}</view>
       </view>
+    </view>
+    <view v-if="ticketData!=null">
+      <singlebtn text="取消报修" type="warn" v-if="repairData.basic.staff_id<0 && ticketData.basic.status<3" @submit="handleCancel" :disabled="ticketData.basic.status==2" />
+      <singlebtn text="确认完成" type="primary" v-if="ticketData.basic.status>=3" @submit="handleFinish" :disabled="ticketData.basic.status==4" />
     </view>
     <appfooter />
     <view style="height:30px"></view>
