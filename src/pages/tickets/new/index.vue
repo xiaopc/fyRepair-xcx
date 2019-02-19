@@ -18,7 +18,6 @@
       </view>
 
       <view class="weui-cells weui-panel" :class="{active: isPanel1Focus}" v-if="sendData.selectDevice==0">
-        <view class="weui-label">请完整填写以下内容:</view>
         <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="brandInput" label="品牌" name="newDeviceBrand" />
         <inputbox @focus="panel1Focus" @blur="panel1Blur" @input="modelInput" label="型号" name="newDeviceModel" />
         <view class="weui-btn-area" style="display:flex">
